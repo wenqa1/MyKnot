@@ -171,6 +171,7 @@ model GalleryImage {
   height       Int
   size         Int
   albumId      Int?
+  caption      String   @default("")
   createdAt    DateTime @default(now())
 
   user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)

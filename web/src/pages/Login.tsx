@@ -84,7 +84,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { user } = await login(account, password);
-      navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setError("账号或密码错误");
     } finally {
@@ -120,7 +120,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { user } = await register(regUsername, regPassword, regEmail, regCode);
-      navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setError("注册失败，请检查信息或验证码是否正确");
     } finally {
@@ -197,7 +197,7 @@ export default function Login() {
                   placeholder="用户名或邮箱"
                   autoFocus
                   autoComplete="username"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
 
@@ -211,7 +211,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="输入密码"
                   autoComplete="current-password"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
 
@@ -242,7 +242,7 @@ export default function Login() {
                   placeholder="3-20个字符"
                   autoFocus
                   autoComplete="username"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
 
@@ -256,7 +256,7 @@ export default function Login() {
                   onChange={(e) => setRegPassword(e.target.value)}
                   placeholder="至少 6 位"
                   autoComplete="new-password"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
 
@@ -270,7 +270,7 @@ export default function Login() {
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="flex-1 px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                    className="flex-1 px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                   />
                   <button
                     type="button"
@@ -297,7 +297,7 @@ export default function Login() {
                       setRegCode(e.target.value.replace(/\D/g, ""))
                     }
                     placeholder="6 位验证码"
-                    className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all tracking-widest text-center text-lg"
+                    className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all tracking-widest text-center text-lg"
                   />
                 </label>
               )}
@@ -323,7 +323,7 @@ export default function Login() {
           </form>
         )}
 
-        <p className="text-center text-stone-300 text-xs mt-6 animate-fade-in">
+        <p className="text-center text-stone-300 dark:text-slate-500 text-xs mt-6 animate-fade-in">
           注册即表示同意服务条款
         </p>
       </div>

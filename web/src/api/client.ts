@@ -169,6 +169,7 @@ export interface GalleryImage {
   height: number;
   size: number;
   albumId: number | null;
+  caption: string;
   createdAt: string;
 }
 
@@ -216,6 +217,10 @@ export async function getMe() {
 
 export async function setPassword(password: string) {
   return api.put("/auth/set-password", { password });
+}
+
+export async function updateProfile(data: { name?: string }) {
+  return api.put("/auth/profile", data);
 }
 
 export function getToken(): string | null {
@@ -333,6 +338,11 @@ export async function deleteImage(id: number) {
 
 export async function moveImageToAlbum(id: number, albumId: number | null) {
   const { data } = await api.put<GalleryImage>(`/gallery/${id}/album`, { albumId });
+  return data;
+}
+
+export async function updateImageCaption(id: number, caption: string) {
+  const { data } = await api.patch<GalleryImage>(`/gallery/${id}/caption`, { caption });
   return data;
 }
 
@@ -483,5 +493,17 @@ export async function getNotificationLogs() {
 
 export async function testNotification(channel: string) {
   const { data } = await api.post<{ ok?: boolean; sent?: number; message: string }>("/notification/test", { channel });
+  return data;
+}
+
+// ---- Sync ----
+
+export async function exportData() {
+  const { data } = await api.get("/sync/export");
+  return data;
+}
+
+export async function importData(backup: unknown) {
+  const { data } = await api.post<{ ok: boolean; imported: number }>("/sync/import", backup);
   return data;
 }

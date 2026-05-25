@@ -269,7 +269,7 @@ export default function DatePicker({
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
           maxLength={10}
-          className="w-full px-4 py-3 pr-11 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all font-mono tracking-[0.05em]"
+          className="w-full px-4 py-3 pr-11 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all font-mono tracking-[0.05em]"
         />
         <button
           type="button"
@@ -277,7 +277,7 @@ export default function DatePicker({
             setOpen((o) => !o);
             if (!open) setPickerMode("days");
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 hover:text-knot-rose hover:bg-knot-rose-light/20 transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 dark:text-slate-400 hover:text-knot-rose hover:bg-knot-rose-light/20 transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -289,7 +289,7 @@ export default function DatePicker({
       </div>
 
       {open && (
-        <div className="absolute z-50 mt-2 p-4 rounded-2xl bg-white/95 backdrop-blur-xl border border-white/40 shadow-xl shadow-knot-rose/5 w-[280px] animate-fade-in-up">
+        <div className="absolute z-50 mt-2 p-4 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/40 dark:border-slate-700/40 shadow-xl shadow-knot-rose/5 w-[280px] animate-fade-in-up">
           {pickerMode === "days" ? (
             <>
               {/* Header — click month/year to enter month picker */}
@@ -302,7 +302,7 @@ export default function DatePicker({
                       return m - 1;
                     });
                   }}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 dark:text-slate-300 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15,18 9,12 15,6" />
@@ -311,7 +311,7 @@ export default function DatePicker({
                 <button
                   type="button"
                   onClick={() => setPickerMode("months")}
-                  className="text-sm font-semibold text-knot-dark hover:text-knot-rose transition-colors px-2 py-1 rounded-lg hover:bg-knot-rose-light/10"
+                  className="text-sm font-semibold text-knot-dark dark:text-slate-200 hover:text-knot-rose transition-colors px-2 py-1 rounded-lg hover:bg-knot-rose-light/10"
                 >
                   {viewYear} 年 {viewMonth + 1} 月
                 </button>
@@ -323,7 +323,7 @@ export default function DatePicker({
                       return m + 1;
                     });
                   }}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 dark:text-slate-300 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9,18 15,12 9,6" />
@@ -334,7 +334,7 @@ export default function DatePicker({
               {/* Weekday labels */}
               <div className="grid grid-cols-7 mb-1">
                 {WEEKDAYS.map((wd) => (
-                  <div key={wd} className="text-center text-[11px] font-medium text-stone-400 py-1">
+                  <div key={wd} className="text-center text-[11px] font-medium text-stone-400 dark:text-slate-400 py-1">
                     {wd}
                   </div>
                 ))}
@@ -356,8 +356,8 @@ export default function DatePicker({
                       onClick={() => commitDay(day)}
                       className={[
                         "w-9 h-9 mx-auto my-0.5 rounded-lg text-sm transition-all",
-                        outside && "text-stone-200 pointer-events-none",
-                        !outside && !isSel && "text-stone-600 hover:bg-knot-rose-light/20",
+                        outside && "text-stone-200 dark:text-slate-600 pointer-events-none",
+                        !outside && !isSel && "text-stone-600 dark:text-slate-300 hover:bg-knot-rose-light/20",
                         isSel && "bg-knot-rose text-white shadow-sm shadow-knot-rose/30",
                         isToday && !isSel && "font-bold text-knot-rose ring-1 ring-knot-rose/30",
                         disabled && "opacity-30 pointer-events-none",
@@ -378,7 +378,7 @@ export default function DatePicker({
                 <button
                   type="button"
                   onClick={() => setViewYear((y) => y - 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 dark:text-slate-300 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15,18 9,12 15,6" />
@@ -387,14 +387,14 @@ export default function DatePicker({
                 <button
                   type="button"
                   onClick={() => setPickerMode("days")}
-                  className="text-sm font-semibold text-knot-dark hover:text-knot-rose transition-colors px-2 py-1 rounded-lg hover:bg-knot-rose-light/10"
+                  className="text-sm font-semibold text-knot-dark dark:text-slate-200 hover:text-knot-rose transition-colors px-2 py-1 rounded-lg hover:bg-knot-rose-light/10"
                 >
                   {viewYear} 年
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewYear((y) => y + 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-500 dark:text-slate-300 hover:bg-knot-rose-light/20 hover:text-knot-rose transition-colors"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9,18 15,12 9,6" />
@@ -414,7 +414,7 @@ export default function DatePicker({
                         "py-2.5 rounded-xl text-sm font-medium transition-all",
                         isCurrent
                           ? "bg-knot-rose text-white shadow-sm shadow-knot-rose/30"
-                          : "text-stone-600 hover:bg-knot-rose-light/20",
+                          : "text-stone-600 dark:text-slate-300 hover:bg-knot-rose-light/20",
                       ].join(" ")}
                     >
                       {label}

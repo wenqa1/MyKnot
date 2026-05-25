@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getProfile, saveProfile, type Profile } from "../api/client";
 import { differenceInDays, format } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { Heart, Gift, User, Settings } from "lucide-react";
+import { Heart, Gift, User } from "lucide-react";
 import GlassCard from "../components/GlassCard";
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -95,14 +95,6 @@ export default function Home() {
   if (!hasProfile && !editing) {
     return (
       <div className="page-enter space-y-6">
-        <div className="flex justify-end">
-          <button
-            onClick={() => navigate("/settings")}
-            className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-knot-muted hover:text-knot-dark transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
         <div className="text-center pt-12">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-knot-rose/10 text-knot-rose mb-4">
             <Heart className="w-10 h-10" fill="currentColor" />
@@ -174,16 +166,6 @@ export default function Home() {
 
   return (
     <div className="page-enter space-y-5">
-      {/* Settings */}
-      <div className="flex justify-end">
-        <button
-          onClick={() => navigate("/settings")}
-          className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center text-knot-muted hover:text-knot-dark transition-colors"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
-      </div>
-
       {/* Countdown */}
       <div className="text-center pt-6 pb-2">
         <p className="text-knot-muted text-sm mb-1">
