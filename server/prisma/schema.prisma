@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile         Profile?
+  events          Event[]
+  scheduleConfig  ScheduleConfig?
+  scheduleItems   ScheduleItem[]
+  periodConfig    PeriodConfig?
+  periodRecords   PeriodRecord[]
+  galleryImages   GalleryImage[]
+}
+
+model VerificationCode {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+}
+
+model Profile {
+  id                    Int      @id @default(autoincrement())
+  userId                Int      @unique
+  relationshipStartDate DateTime
+  myName                String?
+  partnerName           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  name             String
+  date             DateTime
+  calendarType     String   @default("solar")
+  lunarMonth       Int?
+  lunarDay         Int?
+  lunarIsLeapMonth Boolean  @default(false)
+  time             String?
+  startTime        String?
+  endTime          String?
+  recurrence       String   @default("yearly")
+  icon             String
+  description      String   @default("")
+  color            String   @default("bg-pink-100 text-pink-600")
+  tag              String   @default("MEMORY")
+  sortOrder        Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, date])
+}
+
+model ScheduleConfig {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @unique
+  daysJson  String
+  timesJson String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ScheduleItem {
+  id        Int    @id @default(autoincrement())
+  userId    Int
+  dayIndex  Int
+  timeIndex Int
+  subject   String
+  person    String
+  duration  Int    @default(2)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PeriodConfig {
+  id         Int @id @default(autoincrement())
+  userId     Int @unique
+  cycleDays  Int @default(28)
+  periodDays Int @default(5)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PeriodRecord {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  startDate DateTime
+  endDate   DateTime?
+  note      String?
+  symptoms  String    @default("[]")
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, startDate])
+}
+
+model GalleryImage {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  filename     String
+  originalName String
+  mimeType     String
+  width        Int
+  height       Int
+  size         Int
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
