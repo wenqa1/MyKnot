@@ -2,9 +2,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 本地开发: sqlite | 生产部署: mysql
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 

@@ -32,7 +32,7 @@
 |------|------|
 | 前端 | React 19 + TypeScript + Vite 8 + Tailwind CSS 4 |
 | 后端 | Express 5 + TypeScript + Prisma ORM |
-| 数据库 | SQLite (开发) / MySQL (生产) |
+| 数据库 | MySQL |
 | 认证 | JWT（用户名+密码 / 邮箱验证码） |
 | 推送 | Bark / Server酱 / 钉钉 / 企业微信 / Webhook / SMTP |
 
