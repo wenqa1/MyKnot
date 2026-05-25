@@ -111,7 +111,7 @@ export default function Admin() {
   if (!me || me.role !== "admin") {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center px-6">
-        <Shield className="w-16 h-16 text-stone-300 mb-4" />
+        <Shield className="w-16 h-16 text-stone-300 dark:text-slate-500 mb-4" />
         <h1 className="text-xl font-bold text-knot-dark mb-2">无访问权限</h1>
         <p className="text-knot-muted text-sm mb-6">需要管理员权限</p>
         <button
@@ -125,13 +125,13 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-dvh bg-stone-50">
+    <div className="min-h-dvh bg-stone-50 dark:bg-slate-800">
       {/* Header */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-stone-100 z-10">
+      <div className="sticky top-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-stone-100 dark:border-slate-700 z-10">
         <div className="max-w-lg mx-auto flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => navigate("/settings")}
-            className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-knot-muted hover:bg-stone-200"
+            className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-slate-700 flex items-center justify-center text-knot-muted hover:bg-stone-200 dark:hover:bg-slate-600"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -139,7 +139,7 @@ export default function Admin() {
           <h1 className="text-lg font-bold text-knot-dark flex-1">管理面板</h1>
           <button
             onClick={handleLogout}
-            className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+            className="w-8 h-8 rounded-lg bg-stone-100 dark:bg-slate-700 flex items-center justify-center text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors"
             title="退出登录"
           >
             <LogOut className="w-4 h-4" />
@@ -160,10 +160,10 @@ export default function Admin() {
         )}
 
         {/* SMTP Configuration */}
-        <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-stone-100 dark:border-slate-700 overflow-hidden">
           <button
             onClick={() => setShowSmtp(!showSmtp)}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-stone-50 transition-colors"
+            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-stone-50 dark:hover:bg-slate-800 transition-colors"
           >
             <Mail className="w-5 h-5 text-knot-rose" />
             <div className="flex-1 text-left">
@@ -177,7 +177,7 @@ export default function Admin() {
             </span>
           </button>
           {showSmtp && (
-            <div className="px-4 py-4 border-t border-stone-50 space-y-3">
+            <div className="px-4 py-4 border-t border-stone-50 dark:border-slate-700 space-y-3">
               <div className="grid grid-cols-3 gap-2">
                 <label className="col-span-2 block">
                   <span className="text-xs font-medium text-knot-dark">Host</span>
@@ -186,7 +186,7 @@ export default function Admin() {
                     value={smtpForm.host}
                     onChange={(e) => setSmtpForm({ ...smtpForm, host: e.target.value })}
                     placeholder="smtp.example.com"
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
                 <label className="block">
@@ -195,7 +195,7 @@ export default function Admin() {
                     type="number"
                     value={smtpForm.port}
                     onChange={(e) => setSmtpForm({ ...smtpForm, port: parseInt(e.target.value) || 587 })}
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
               </div>
@@ -207,7 +207,7 @@ export default function Admin() {
                     value={smtpForm.user}
                     onChange={(e) => setSmtpForm({ ...smtpForm, user: e.target.value })}
                     placeholder="user@example.com"
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
                 <label className="block">
@@ -217,7 +217,7 @@ export default function Admin() {
                     value={smtpForm.pass}
                     onChange={(e) => setSmtpForm({ ...smtpForm, pass: e.target.value })}
                     placeholder="授权码"
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
               </div>
@@ -229,7 +229,7 @@ export default function Admin() {
                     value={smtpForm.fromEmail}
                     onChange={(e) => setSmtpForm({ ...smtpForm, fromEmail: e.target.value })}
                     placeholder="noreply@example.com"
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
                 <label className="block">
@@ -239,7 +239,7 @@ export default function Admin() {
                     value={smtpForm.fromName}
                     onChange={(e) => setSmtpForm({ ...smtpForm, fromName: e.target.value })}
                     placeholder="MyKnot"
-                    className="mt-1 w-full px-3 py-2 bg-stone-50 rounded-lg border border-stone-100 text-sm text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+                    className="mt-1 w-full px-3 py-2 bg-stone-50 dark:bg-slate-800 rounded-lg border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
                   />
                 </label>
               </div>
@@ -278,7 +278,7 @@ export default function Admin() {
                     <button
                       onClick={handleTestSmtp}
                       disabled={testing || !testEmail}
-                      className="px-4 py-2 bg-stone-800 text-white rounded-lg text-sm font-semibold hover:bg-stone-900 disabled:opacity-40 transition-all whitespace-nowrap"
+                      className="px-4 py-2 bg-stone-800 dark:bg-slate-700 text-white rounded-lg text-sm font-semibold hover:bg-stone-900 dark:hover:bg-slate-500 disabled:opacity-40 transition-all whitespace-nowrap"
                     >
                       {testing ? "..." : "发送"}
                     </button>
@@ -290,7 +290,7 @@ export default function Admin() {
                       setSmtpErr("");
                       setSmtpMsg("");
                     }}
-                    className="flex-1 py-2.5 bg-stone-800 text-white rounded-xl text-sm font-semibold hover:bg-stone-900 transition-all flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 bg-stone-800 dark:bg-slate-700 text-white rounded-xl text-sm font-semibold hover:bg-stone-900 dark:hover:bg-slate-500 transition-all flex items-center justify-center gap-1.5"
                   >
                     <Send className="w-4 h-4" />
                     测试邮件
@@ -302,13 +302,13 @@ export default function Admin() {
         </div>
 
         {/* User List */}
-        <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-stone-100 dark:border-slate-700 overflow-hidden">
           <div className="px-4 py-3 border-b border-stone-50">
             <p className="text-sm font-semibold text-knot-dark">
               用户列表 ({users.length})
             </p>
           </div>
-          <div className="divide-y divide-stone-50">
+          <div className="divide-y divide-stone-50 dark:divide-slate-700">
             {users.map((user) => (
               <div key={user.id} className="px-4 py-3">
                 <div className="flex items-center justify-between">
@@ -370,7 +370,7 @@ function StatCard({
   value: number;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 p-4 flex items-center gap-3">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-stone-100 dark:border-slate-700 p-4 flex items-center gap-3">
       <div className="w-10 h-10 rounded-xl bg-knot-rose/10 flex items-center justify-center text-knot-rose">
         <Icon className="w-5 h-5" />
       </div>

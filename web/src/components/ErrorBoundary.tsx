@@ -31,7 +31,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="flex flex-col items-center justify-center py-20 px-6">
-          <AlertTriangle className="w-12 h-12 text-stone-300 mb-4" />
+          <AlertTriangle className="w-12 h-12 text-stone-300 dark:text-slate-500 mb-4" />
           <h2 className="text-lg font-bold text-knot-dark mb-2">页面出错了</h2>
           <p className="text-sm text-knot-muted text-center mb-6">
             {this.state.error?.message || "发生了未知错误"}

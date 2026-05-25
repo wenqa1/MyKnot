@@ -255,6 +255,26 @@ router.put("/set-password", requireAuth, async (req, res) => {
   }
 });
 
+// PUT /auth/profile — update user profile (name)
+router.put("/profile", requireAuth, async (req, res) => {
+  try {
+    const { name } = req.body;
+    const data: Record<string, unknown> = {};
+    if (name !== undefined) data.name = (name as string).trim() || null;
+
+    if (Object.keys(data).length === 0) {
+      res.status(400).json({ error: "No fields to update" });
+      return;
+    }
+
+    await prisma.user.update({ where: { id: req.userId }, data });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("update profile error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // GET /auth/me
 router.get("/me", requireAuth, async (req, res) => {
   try {

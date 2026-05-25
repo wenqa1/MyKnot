@@ -5,14 +5,14 @@ interface SkeletonProps {
 export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse bg-stone-200 rounded-xl ${className}`}
+      className={`animate-pulse bg-stone-200 dark:bg-slate-600 rounded-xl ${className}`}
     />
   );
 }
 
 export function CardSkeleton() {
   return (
-    <div className="bg-white/60 rounded-3xl p-6 space-y-3">
+    <div className="bg-white/60 dark:bg-slate-800/60 rounded-3xl p-6 space-y-3">
       <Skeleton className="h-5 w-24" />
       <Skeleton className="h-8 w-48" />
       <Skeleton className="h-4 w-32" />

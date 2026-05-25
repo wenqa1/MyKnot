@@ -4,10 +4,8 @@ import prisma from "../db/prisma.js";
 // ---- Bark (iOS push) ----
 // Accepts full URL (https://api.day.app/KEY/) or just the key
 function extractBarkKey(input: string): string {
-  // Strip protocol and domain if present
   const urlMatch = input.match(/https?:\/\/[^/]+\/([^/?&\s]+)/);
   if (urlMatch) return urlMatch[1];
-  // Remove trailing slash and whitespace
   return input.trim().replace(/\/+$/, "");
 }
 
@@ -15,21 +13,16 @@ export async function sendBarkNotification(input: string, title: string, body: s
   const key = extractBarkKey(input);
   if (!key) throw new Error("Bark key is empty");
 
+  const iconUrl = "https://raw.githubusercontent.com/wenqa1/MyKnot/main/web/public/favicon.png";
+  const url = `https://api.day.app/${key}/${encodeURIComponent(title)}/${encodeURIComponent(body)}?icon=${encodeURIComponent(iconUrl)}&group=MyKnot&sound=minuet.caf`;
+
   console.log(`[Bark] Sending to key: ${key}, title: "${title}"`);
+  console.log(`[Bark] URL: ${url}`);
 
-  const res = await fetch("https://api.day.app/push", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      device_key: key,
-      title,
-      body,
-      group: "MyKnot",
-      sound: "minuet.caf",
-    }),
-  });
-
+  const res = await fetch(url);
   const data = await res.json();
+  console.log(`[Bark] Response:`, JSON.stringify(data));
+
   if (data.code !== 200) {
     console.error(`[Bark] API error:`, data);
     throw new Error(`Bark send failed: ${data.message || data.code}`);

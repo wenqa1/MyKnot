@@ -39,6 +39,8 @@ const upload = multer({
 
 const router = Router();
 
+// ── Image routes ──
+
 // GET /gallery — list images, optional ?albumId=
 router.get("/", requireAuth, async (req, res) => {
   try {
@@ -85,6 +87,8 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
     const albumIdRaw = req.body.albumId ? parseInt(req.body.albumId as string) : null;
     const albumId = albumIdRaw && !isNaN(albumIdRaw) ? albumIdRaw : null;
 
+    const caption = (req.body.caption as string)?.trim() || "";
+
     const image = await prisma.galleryImage.create({
       data: {
         userId: req.userId!,
@@ -95,6 +99,7 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
         height,
         size: req.file.size,
         albumId,
+        caption,
       },
     });
 
@@ -105,8 +110,8 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
   }
 });
 
-// PUT /gallery/:id/album — move image to an album
-router.put("/:id/album", requireAuth, async (req, res) => {
+// PATCH /gallery/:id/caption — update image caption
+router.patch("/:id/caption", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
     const userIds = await getSharedUserIds(req);
@@ -119,47 +124,19 @@ router.put("/:id/album", requireAuth, async (req, res) => {
       return;
     }
 
-    const { albumId } = req.body as { albumId: number | null };
+    const { caption } = req.body as { caption: string };
     const updated = await prisma.galleryImage.update({
       where: { id },
-      data: { albumId },
+      data: { caption: (caption || "").trim() },
     });
     res.json(updated);
   } catch (err) {
-    console.error("move image error:", err);
+    console.error("update caption error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// DELETE /gallery/:id
-router.delete("/:id", requireAuth, async (req, res) => {
-  try {
-    const id = parseInt(req.params.id as string);
-    const userIds = await getSharedUserIds(req);
-    const image = await prisma.galleryImage.findFirst({
-      where: { id, userId: { in: userIds } },
-    });
-
-    if (!image) {
-      res.status(404).json({ error: "Image not found" });
-      return;
-    }
-
-    const filePath = path.join(UPLOADS_DIR, image.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    await prisma.galleryImage.delete({ where: { id } });
-
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("delete gallery error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// ── Album routes ──
+// ── Album routes (must come before /:id routes) ──
 
 // GET /gallery/albums
 router.get("/albums", requireAuth, async (req, res) => {
@@ -240,6 +217,62 @@ router.delete("/albums/:id", requireAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error("delete album error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ── Image-specific routes (params: :id) ──
+
+// PUT /gallery/:id/album — move image to an album
+router.put("/:id/album", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
+
+    const image = await prisma.galleryImage.findFirst({
+      where: { id, userId: { in: userIds } },
+    });
+    if (!image) {
+      res.status(404).json({ error: "Image not found" });
+      return;
+    }
+
+    const { albumId } = req.body as { albumId: number | null };
+    const updated = await prisma.galleryImage.update({
+      where: { id },
+      data: { albumId },
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("move image error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// DELETE /gallery/:id
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
+    const image = await prisma.galleryImage.findFirst({
+      where: { id, userId: { in: userIds } },
+    });
+
+    if (!image) {
+      res.status(404).json({ error: "Image not found" });
+      return;
+    }
+
+    const filePath = path.join(UPLOADS_DIR, image.filename);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    await prisma.galleryImage.delete({ where: { id } });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("delete gallery error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

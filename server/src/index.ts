@@ -14,6 +14,8 @@ import adminRoutes from "./routes/admin.js";
 import spaceRoutes from "./routes/space.js";
 import uploadRoutes from "./routes/upload.js";
 import notificationRoutes from "./routes/notifications.js";
+import syncRoutes from "./routes/sync.js";
+import dashboardRoutes, { getDashboardHtml } from "./routes/dashboard.js";
 import { checkAllUsersScheduled } from "./utils/notification-check.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -48,6 +50,13 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+// Dashboard
+app.use("/api/dashboard", dashboardRoutes);
+app.get("/", (_req, res) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(getDashboardHtml());
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
@@ -59,6 +68,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/space", spaceRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/notification", notificationRoutes);
+app.use("/api/sync", syncRoutes);
 
 // Scheduled notification check — runs every minute
 setInterval(async () => {

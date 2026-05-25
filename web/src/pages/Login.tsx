@@ -84,7 +84,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { user } = await login(account, password);
-      navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setError("账号或密码错误");
     } finally {
@@ -120,7 +120,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { user } = await register(regUsername, regPassword, regEmail, regCode);
-      navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setError("注册失败，请检查信息或验证码是否正确");
     } finally {
