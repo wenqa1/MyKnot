@@ -7,6 +7,7 @@ import GlassCard from "../components/GlassCard";
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorState from "../components/ErrorState";
+import DatePicker from "../components/DatePicker";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Home() {
       setProfile(data);
       if (data.relationshipStartDate) {
         setForm({
-          relationshipStartDate: data.relationshipStartDate,
+          relationshipStartDate: format(new Date(data.relationshipStartDate), "yyyy-MM-dd"),
           myName: data.myName || "",
           partnerName: data.partnerName || "",
         });
@@ -123,13 +124,11 @@ export default function Home() {
               <span className="text-sm font-medium text-knot-dark">
                 在一起的日子
               </span>
-              <input
-                type="date"
+              <DatePicker
                 value={form.relationshipStartDate}
-                onChange={(e) =>
-                  setForm({ ...form, relationshipStartDate: e.target.value })
-                }
-                className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                onChange={(v) => setForm({ ...form, relationshipStartDate: v })}
+                placeholder="选择在一起的日子"
+                className="mt-1.5"
               />
             </label>
 
@@ -244,7 +243,9 @@ export default function Home() {
             onClick={() => {
               setEditing(true);
               setForm({
-                relationshipStartDate: profile?.relationshipStartDate || "",
+                relationshipStartDate: profile?.relationshipStartDate
+                  ? format(new Date(profile.relationshipStartDate), "yyyy-MM-dd")
+                  : "",
                 myName: profile?.myName || "",
                 partnerName: profile?.partnerName || "",
               });
@@ -263,13 +264,11 @@ export default function Home() {
             <span className="text-sm font-medium text-knot-dark">
               在一起的日子
             </span>
-            <input
-              type="date"
+            <DatePicker
               value={form.relationshipStartDate}
-              onChange={(e) =>
-                setForm({ ...form, relationshipStartDate: e.target.value })
-              }
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+              onChange={(v) => setForm({ ...form, relationshipStartDate: v })}
+              placeholder="选择在一起的日子"
+              className="mt-1.5"
             />
           </label>
 

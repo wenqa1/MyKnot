@@ -23,6 +23,9 @@ import {
 } from "date-fns";
 import { Solar, Lunar } from "lunar-javascript";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import DatePicker from "../components/DatePicker";
+import ConfirmModal from "../components/ConfirmModal";
+import { useToast } from "../components/Toast";
 import KnotIcon, {
   EVENT_ICON_NAMES,
   DEFAULT_EVENT_ICON,
@@ -93,6 +96,8 @@ export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const { toast } = useToast();
   const [form, setForm] = useState({
     name: "",
     date: "",
@@ -198,14 +203,21 @@ export default function Calendar() {
   }
 
   async function handleDeleteEvent(id: number) {
-    if (!confirm("确定删除这个事件？")) return;
+    setDeleteConfirmId(id);
+  }
+
+  async function confirmDeleteEvent() {
+    if (deleteConfirmId === null) return;
+    const id = deleteConfirmId;
+    setDeleteConfirmId(null);
     try {
       await deleteEvent(id);
       await load();
       setEditEvent(null);
       setShowForm(false);
+      toast("success", "已删除");
     } catch {
-      // fail silently
+      toast("error", "删除失败");
     }
   }
 
@@ -396,10 +408,7 @@ export default function Calendar() {
                       setEditEvent(event);
                       setForm({
                         name: event.name,
-                        date:
-                          typeof event.date === "string"
-                            ? event.date
-                            : format(new Date(event.date), "yyyy-MM-dd"),
+                        date: format(new Date(event.date), "yyyy-MM-dd"),
                         icon: event.icon,
                         color: event.color,
                         tag: event.tag,
@@ -453,11 +462,11 @@ export default function Calendar() {
 
           <label className="block">
             <span className="text-sm font-medium text-knot-dark">日期</span>
-            <input
-              type="date"
+            <DatePicker
               value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+              onChange={(v) => setForm({ ...form, date: v })}
+              placeholder="选择日期"
+              className="mt-1.5"
             />
           </label>
 
@@ -571,6 +580,15 @@ export default function Calendar() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        open={deleteConfirmId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={confirmDeleteEvent}
+        title="删除事件"
+        message="确定要删除这个事件吗？此操作不可撤销。"
+        danger
+      />
     </div>
   );
 }

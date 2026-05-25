@@ -11,7 +11,6 @@ import { getSharedUserIds } from "../middleware/space.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads", "gallery");
 
-// Ensure uploads directory exists
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
@@ -40,12 +39,19 @@ const upload = multer({
 
 const router = Router();
 
-// GET /gallery
+// GET /gallery — list images, optional ?albumId=
 router.get("/", requireAuth, async (req, res) => {
   try {
     const userIds = await getSharedUserIds(req);
+    const albumId = req.query.albumId ? parseInt(req.query.albumId as string) : undefined;
+
+    const where: Record<string, unknown> = { userId: { in: userIds } };
+    if (albumId !== undefined && !isNaN(albumId)) {
+      where.albumId = albumId;
+    }
+
     const images = await prisma.galleryImage.findMany({
-      where: { userId: { in: userIds } },
+      where,
       orderBy: { createdAt: "desc" },
     });
     res.json(images);
@@ -55,7 +61,7 @@ router.get("/", requireAuth, async (req, res) => {
   }
 });
 
-// POST /gallery
+// POST /gallery — upload image, optional albumId in form
 router.post("/", requireAuth, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
@@ -73,8 +79,11 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
       width = dimensions.width || 0;
       height = dimensions.height || 0;
     } catch {
-      // If can't read dimensions, leave as 0
+      // leave as 0
     }
+
+    const albumIdRaw = req.body.albumId ? parseInt(req.body.albumId as string) : null;
+    const albumId = albumIdRaw && !isNaN(albumIdRaw) ? albumIdRaw : null;
 
     const image = await prisma.galleryImage.create({
       data: {
@@ -85,12 +94,39 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
         width,
         height,
         size: req.file.size,
+        albumId,
       },
     });
 
     res.status(201).json(image);
   } catch (err) {
     console.error("upload gallery error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// PUT /gallery/:id/album — move image to an album
+router.put("/:id/album", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
+
+    const image = await prisma.galleryImage.findFirst({
+      where: { id, userId: { in: userIds } },
+    });
+    if (!image) {
+      res.status(404).json({ error: "Image not found" });
+      return;
+    }
+
+    const { albumId } = req.body as { albumId: number | null };
+    const updated = await prisma.galleryImage.update({
+      where: { id },
+      data: { albumId },
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("move image error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -109,7 +145,6 @@ router.delete("/:id", requireAuth, async (req, res) => {
       return;
     }
 
-    // Delete file from disk
     const filePath = path.join(UPLOADS_DIR, image.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -120,6 +155,91 @@ router.delete("/:id", requireAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error("delete gallery error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ── Album routes ──
+
+// GET /gallery/albums
+router.get("/albums", requireAuth, async (req, res) => {
+  try {
+    const userIds = await getSharedUserIds(req);
+    const albums = await prisma.galleryAlbum.findMany({
+      where: { userId: { in: userIds } },
+      orderBy: { createdAt: "asc" },
+      include: { _count: { select: { images: true } } },
+    });
+    res.json(albums);
+  } catch (err) {
+    console.error("get albums error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /gallery/albums
+router.post("/albums", requireAuth, async (req, res) => {
+  try {
+    const { name } = req.body as { name: string };
+    if (!name?.trim()) {
+      res.status(400).json({ error: "Album name is required" });
+      return;
+    }
+    const album = await prisma.galleryAlbum.create({
+      data: { name: name.trim(), userId: req.userId! },
+    });
+    res.status(201).json(album);
+  } catch (err) {
+    console.error("create album error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// PUT /gallery/albums/:id
+router.put("/albums/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
+    const album = await prisma.galleryAlbum.findFirst({
+      where: { id, userId: { in: userIds } },
+    });
+    if (!album) {
+      res.status(404).json({ error: "Album not found" });
+      return;
+    }
+
+    const { name } = req.body as { name: string };
+    if (!name?.trim()) {
+      res.status(400).json({ error: "Album name is required" });
+      return;
+    }
+    const updated = await prisma.galleryAlbum.update({
+      where: { id },
+      data: { name: name.trim() },
+    });
+    res.json(updated);
+  } catch (err) {
+    console.error("update album error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// DELETE /gallery/albums/:id
+router.delete("/albums/:id", requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
+    const album = await prisma.galleryAlbum.findFirst({
+      where: { id, userId: { in: userIds } },
+    });
+    if (!album) {
+      res.status(404).json({ error: "Album not found" });
+      return;
+    }
+    await prisma.galleryAlbum.delete({ where: { id } });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("delete album error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

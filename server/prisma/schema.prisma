@@ -29,6 +29,7 @@ model User {
   periodConfig    PeriodConfig?
   periodRecords   PeriodRecord[]
   galleryImages      GalleryImage[]
+  galleryAlbums      GalleryAlbum[]
   notificationConfig NotificationConfig?
 }
 
@@ -147,6 +148,19 @@ model PeriodRecord {
   @@index([userId, startDate])
 }
 
+model GalleryAlbum {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images GalleryImage[]
+
+  @@index([userId])
+}
+
 model GalleryImage {
   id           Int      @id @default(autoincrement())
   userId       Int
@@ -156,9 +170,11 @@ model GalleryImage {
   width        Int
   height       Int
   size         Int
+  albumId      Int?
   createdAt    DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  album GalleryAlbum? @relation(fields: [albumId], references: [id], onDelete: SetNull)
 
   @@index([userId])
 }

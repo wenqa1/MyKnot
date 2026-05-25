@@ -6,9 +6,10 @@ interface PhotoViewerProps {
   src: string;
   onClose: () => void;
   onDelete?: () => void;
+  bottomBar?: React.ReactNode;
 }
 
-export default function PhotoViewer({ src, onClose, onDelete }: PhotoViewerProps) {
+export default function PhotoViewer({ src, onClose, onDelete, bottomBar }: PhotoViewerProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -55,6 +56,17 @@ export default function PhotoViewer({ src, onClose, onDelete }: PhotoViewerProps
         className="max-w-full max-h-full object-contain p-4"
         onClick={(e) => e.stopPropagation()}
       />
+
+      {bottomBar && (
+        <div
+          className="absolute bottom-0 left-0 right-0 p-4 flex justify-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="bg-black/50 backdrop-blur rounded-full px-4 py-2">
+            {bottomBar}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

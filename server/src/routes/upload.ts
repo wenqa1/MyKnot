@@ -15,8 +15,8 @@ if (!fs.existsSync(AVATARS_DIR)) {
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, AVATARS_DIR),
-  filename: (_req, _file, cb) => {
-    const ext = ".webp";
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase() || ".png";
     const name = `avatar-${Date.now()}-${Math.random().toString(36).slice(2, 6)}${ext}`;
     cb(null, name);
   },

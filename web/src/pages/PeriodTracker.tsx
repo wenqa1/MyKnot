@@ -13,6 +13,9 @@ import GlassCard from "../components/GlassCard";
 import { HeartPulse, ClipboardList } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorState from "../components/ErrorState";
+import DatePicker from "../components/DatePicker";
+import ConfirmModal from "../components/ConfirmModal";
+import { useToast } from "../components/Toast";
 import EmptyState from "../components/EmptyState";
 import Modal from "../components/Modal";
 
@@ -44,6 +47,8 @@ export default function PeriodTracker() {
   const [showRecordForm, setShowRecordForm] = useState(false);
   const [editRecord, setEditRecord] = useState<PeriodRecord | null>(null);
   const [showConfig, setShowConfig] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const { toast } = useToast();
   const [recordForm, setRecordForm] = useState({
     startDate: "",
     endDate: "",
@@ -95,12 +100,19 @@ export default function PeriodTracker() {
   }
 
   async function handleDeleteRecord(id: number) {
-    if (!confirm("确定删除这条记录？")) return;
+    setDeleteConfirmId(id);
+  }
+
+  async function confirmDeleteRecord() {
+    if (deleteConfirmId === null) return;
+    const id = deleteConfirmId;
+    setDeleteConfirmId(null);
     try {
       await deletePeriodRecord(id);
       await load();
+      toast("success", "记录已删除");
     } catch {
-      // fail silently
+      toast("error", "删除失败");
     }
   }
 
@@ -279,14 +291,9 @@ export default function PeriodTracker() {
                   onClick={() => {
                     setEditRecord(record);
                     setRecordForm({
-                      startDate:
-                        typeof record.startDate === "string"
-                          ? record.startDate
-                          : format(new Date(record.startDate), "yyyy-MM-dd"),
+                      startDate: format(new Date(record.startDate), "yyyy-MM-dd"),
                       endDate: record.endDate
-                        ? typeof record.endDate === "string"
-                          ? record.endDate
-                          : format(new Date(record.endDate), "yyyy-MM-dd")
+                        ? format(new Date(record.endDate), "yyyy-MM-dd")
                         : "",
                       note: record.note || "",
                     });
@@ -338,13 +345,11 @@ export default function PeriodTracker() {
         <div className="space-y-4">
           <label className="block">
             <span className="text-sm font-medium text-knot-dark">开始日期</span>
-            <input
-              type="date"
+            <DatePicker
               value={recordForm.startDate}
-              onChange={(e) =>
-                setRecordForm({ ...recordForm, startDate: e.target.value })
-              }
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+              onChange={(v) => setRecordForm({ ...recordForm, startDate: v })}
+              placeholder="选择开始日期"
+              className="mt-1.5"
             />
           </label>
 
@@ -352,13 +357,11 @@ export default function PeriodTracker() {
             <span className="text-sm font-medium text-knot-dark">
               结束日期 <span className="text-stone-300 font-normal">可选</span>
             </span>
-            <input
-              type="date"
+            <DatePicker
               value={recordForm.endDate}
-              onChange={(e) =>
-                setRecordForm({ ...recordForm, endDate: e.target.value })
-              }
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+              onChange={(v) => setRecordForm({ ...recordForm, endDate: v })}
+              placeholder="选择结束日期"
+              className="mt-1.5"
             />
           </label>
 
@@ -464,6 +467,15 @@ export default function PeriodTracker() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        open={deleteConfirmId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={confirmDeleteRecord}
+        title="删除记录"
+        message="确定要删除这条经期记录吗？此操作不可撤销。"
+        danger
+      />
     </div>
   );
 }

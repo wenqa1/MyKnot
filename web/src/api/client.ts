@@ -168,7 +168,16 @@ export interface GalleryImage {
   width: number;
   height: number;
   size: number;
+  albumId: number | null;
   createdAt: string;
+}
+
+export interface GalleryAlbum {
+  id: number;
+  name: string;
+  userId: number;
+  createdAt: string;
+  _count?: { images: number };
 }
 
 // ---- Auth ----
@@ -302,14 +311,16 @@ export async function deletePeriodRecord(id: number) {
 
 // ---- Gallery ----
 
-export async function getGallery() {
-  const { data } = await api.get<GalleryImage[]>("/gallery");
+export async function getGallery(albumId?: number) {
+  const params = albumId !== undefined ? { albumId } : {};
+  const { data } = await api.get<GalleryImage[]>("/gallery", { params });
   return data;
 }
 
-export async function uploadImage(file: File) {
+export async function uploadImage(file: File, albumId?: number) {
   const form = new FormData();
   form.append("image", file);
+  if (albumId !== undefined) form.append("albumId", String(albumId));
   const { data } = await api.post<GalleryImage>("/gallery", form, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -320,8 +331,34 @@ export async function deleteImage(id: number) {
   return api.delete(`/gallery/${id}`);
 }
 
+export async function moveImageToAlbum(id: number, albumId: number | null) {
+  const { data } = await api.put<GalleryImage>(`/gallery/${id}/album`, { albumId });
+  return data;
+}
+
 export function getImageUrl(filename: string): string {
   return `/gallery/files/${filename}`;
+}
+
+// ---- Gallery Albums ----
+
+export async function getAlbums() {
+  const { data } = await api.get<GalleryAlbum[]>("/gallery/albums");
+  return data;
+}
+
+export async function createAlbum(name: string) {
+  const { data } = await api.post<GalleryAlbum>("/gallery/albums", { name });
+  return data;
+}
+
+export async function updateAlbum(id: number, name: string) {
+  const { data } = await api.put<GalleryAlbum>(`/gallery/albums/${id}`, { name });
+  return data;
+}
+
+export async function deleteAlbum(id: number) {
+  return api.delete(`/gallery/albums/${id}`);
 }
 
 // ---- Space ----
