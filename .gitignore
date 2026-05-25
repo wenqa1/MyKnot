@@ -6,3 +6,6 @@ server/uploads
 *.db
 *.sqlite
 .vite
+TODO.md
+.claude/
+.vscode/
