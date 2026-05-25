@@ -101,8 +101,8 @@ router.post("/register", async (req, res) => {
       res.status(400).json({ error: "Username can only contain letters, numbers and underscores" });
       return;
     }
-    if (!password || password.length < 6) {
-      res.status(400).json({ error: "Password must be at least 6 characters" });
+    if (!password || password.length < 3) {
+      res.status(400).json({ error: "Password must be at least 3 characters" });
       return;
     }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -238,8 +238,8 @@ router.post("/verify", async (req, res) => {
 router.put("/set-password", requireAuth, async (req, res) => {
   try {
     const { password } = req.body;
-    if (!password || password.length < 6) {
-      res.status(400).json({ error: "Password must be at least 6 characters" });
+    if (!password || password.length < 3) {
+      res.status(400).json({ error: "Password must be at least 3 characters" });
       return;
     }
 
