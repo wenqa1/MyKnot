@@ -12,7 +12,7 @@ import ErrorState from "../components/ErrorState";
 const PERSON_COLORS: Record<string, string> = {
   her: "bg-rose-50 border-rose-200 text-rose-600",
   him: "bg-purple-50 border-purple-200 text-purple-600",
-  both: "bg-slate-100 border-slate-200 text-slate-700",
+  both: "bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200",
 };
 
 const PERSON_LABELS: Record<string, string> = {
@@ -167,15 +167,15 @@ export default function Schedule() {
         <div className="min-w-[640px]">
           <GlassCard className="p-0 overflow-hidden">
             {/* Header row */}
-            <div className="grid gap-px bg-stone-100/50 rounded-t-2xl overflow-hidden">
+            <div className="grid gap-px bg-stone-100/50 dark:bg-slate-700/50 rounded-t-2xl overflow-hidden">
               <div className="grid gap-0" style={{ gridTemplateColumns: `80px repeat(${schedule.times.length}, 1fr)` }}>
-                <div className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/80">
+                <div className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/80 dark:bg-slate-800/80">
                   时间
                 </div>
                 {schedule.times.map((time, i) => (
                   <div
                     key={i}
-                    className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/80 text-center"
+                    className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/80 dark:bg-slate-800/80 text-center"
                   >
                     {time}
                   </div>
@@ -190,7 +190,7 @@ export default function Schedule() {
                 className="grid gap-0"
                 style={{ gridTemplateColumns: `80px repeat(${schedule.times.length}, 1fr)` }}
               >
-                <div className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/40 border-t border-stone-100 flex items-center">
+                <div className="p-3 text-xs font-semibold text-knot-muted bg-stone-50/40 dark:bg-slate-800/40 border-t border-stone-100 dark:border-slate-700 dark:border-slate-700 flex items-center">
                   {day}
                 </div>
                 {schedule.times.map((_time, timeIndex) => {
@@ -202,7 +202,7 @@ export default function Schedule() {
                     <button
                       key={timeIndex}
                       onClick={() => openCell(dayIndex, timeIndex)}
-                      className={`min-h-[52px] p-1.5 border-t border-stone-100 text-xs flex flex-col items-center justify-center transition-colors hover:bg-knot-rose/5 ${
+                      className={`min-h-[52px] p-1.5 border-t border-stone-100 dark:border-slate-700 text-xs flex flex-col items-center justify-center transition-colors hover:bg-knot-rose/5 ${
                         item ? colors + " border rounded-lg m-0.5" : ""
                       }`}
                     >
@@ -216,7 +216,7 @@ export default function Schedule() {
                           </span>
                         </>
                       ) : (
-                        <span className="text-stone-300 text-lg">+</span>
+                        <span className="text-stone-300 dark:text-slate-500 text-lg">+</span>
                       )}
                     </button>
                   );
@@ -247,7 +247,7 @@ export default function Schedule() {
                 setCellForm({ ...cellForm, subject: e.target.value })
               }
               placeholder="例如：上课、学习"
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+              className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
               autoFocus
             />
           </label>
@@ -262,7 +262,7 @@ export default function Schedule() {
                   className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     cellForm.person === p
                       ? PERSON_COLORS[p] + " ring-2 ring-offset-1"
-                      : "bg-stone-50 text-knot-muted hover:bg-stone-100"
+                      : "bg-stone-50 dark:bg-slate-800 text-knot-muted hover:bg-stone-100 dark:hover:bg-slate-700"
                   }`}
                 >
                   {PERSON_LABELS[p]}
@@ -282,7 +282,7 @@ export default function Schedule() {
             )}
             <button
               onClick={() => setEditCell(null)}
-              className="flex-1 py-3 bg-stone-100 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 transition-colors"
+              className="flex-1 py-3 bg-stone-100 dark:bg-slate-700 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors"
             >
               取消
             </button>

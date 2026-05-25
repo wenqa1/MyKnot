@@ -129,7 +129,7 @@ export default function AppSettings() {
           </div>
           <button
             onClick={toggleTheme}
-            className={`relative w-14 h-8 rounded-full transition-colors ${theme === "dark" ? "bg-knot-purple" : "bg-stone-200"}`}
+            className={`relative w-14 h-8 rounded-full transition-colors ${theme === "dark" ? "bg-knot-purple" : "bg-stone-200 dark:bg-slate-600"}`}
           >
             <div className={`absolute top-0.5 w-7 h-7 rounded-full bg-white shadow transition-transform flex items-center justify-center ${theme === "dark" ? "translate-x-6.5" : "translate-x-0.5"}`}>
               {theme === "dark" ? <Moon className="w-3.5 h-3.5 text-knot-purple" /> : <Sun className="w-3.5 h-3.5 text-knot-amber" />}
@@ -152,7 +152,7 @@ export default function AppSettings() {
             type="text" value={bgUrl}
             onChange={(e) => { setBgUrl(e.target.value); setBgPreview(e.target.value); }}
             placeholder="输入图片 URL"
-            className="flex-1 px-3 py-2.5 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
+            className="flex-1 px-3 py-2.5 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-sm text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40"
           />
           <button onClick={handleSaveBg} className="px-4 py-2.5 bg-knot-rose text-white rounded-xl text-sm font-semibold hover:bg-rose-500 transition-all active:scale-[0.98]">保存</button>
         </div>

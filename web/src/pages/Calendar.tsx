@@ -293,13 +293,13 @@ export default function Calendar() {
   return (
     <div className="page-enter space-y-5">
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-white/50 rounded-2xl p-1">
+      <div className="flex items-center gap-1 bg-white/50 dark:bg-slate-800/50 rounded-2xl p-1">
         <button
           onClick={() => setTab("calendar")}
           className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             tab === "calendar"
               ? "bg-knot-rose text-white shadow-sm shadow-knot-rose/20"
-              : "text-stone-500"
+              : "text-stone-500 dark:text-slate-300"
           }`}
         >
           日历
@@ -309,7 +309,7 @@ export default function Calendar() {
           className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
             tab === "period"
               ? "bg-knot-rose text-white shadow-sm shadow-knot-rose/20"
-              : "text-stone-500"
+              : "text-stone-500 dark:text-slate-300"
           }`}
         >
           经期
@@ -355,7 +355,7 @@ export default function Calendar() {
           <div className="flex items-center justify-between">
             <button
               onClick={prevMonth}
-              className="w-10 h-10 rounded-full glass flex items-center justify-center text-knot-dark hover:bg-white/50 transition-colors"
+              className="w-10 h-10 rounded-full glass flex items-center justify-center text-knot-dark hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -364,7 +364,7 @@ export default function Calendar() {
             </h2>
             <button
               onClick={nextMonth}
-              className="w-10 h-10 rounded-full glass flex items-center justify-center text-knot-dark hover:bg-white/50 transition-colors"
+              className="w-10 h-10 rounded-full glass flex items-center justify-center text-knot-dark hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -565,7 +565,7 @@ export default function Calendar() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="例如：第一次见面"
-                  className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
 
@@ -592,7 +592,7 @@ export default function Calendar() {
                         className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                           form.icon === iconName
                             ? "bg-knot-rose/20 ring-2 ring-knot-rose text-knot-rose"
-                            : "bg-stone-50 text-knot-muted hover:bg-stone-100"
+                            : "bg-stone-50 dark:bg-slate-800 text-knot-muted hover:bg-stone-100 dark:hover:bg-slate-700"
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -629,7 +629,7 @@ export default function Calendar() {
                   }
                   placeholder="可选"
                   rows={2}
-                  className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all resize-none"
+                  className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all resize-none"
                 />
               </label>
 
@@ -645,11 +645,11 @@ export default function Calendar() {
                     })
                   }
                   className={`relative w-12 h-7 rounded-full transition-colors ${
-                    form.recurrence === "yearly" ? "bg-knot-rose" : "bg-stone-200"
+                    form.recurrence === "yearly" ? "bg-knot-rose" : "bg-stone-200 dark:bg-slate-600"
                   }`}
                 >
                   <div
-                    className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform ${
+                    className={`absolute top-0.5 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow transition-transform ${
                       form.recurrence === "yearly"
                         ? "translate-x-6"
                         : "translate-x-0.5"
@@ -674,7 +674,7 @@ export default function Calendar() {
                     setShowForm(false);
                     setEditEvent(null);
                   }}
-                  className="flex-1 py-3 bg-stone-100 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 transition-colors"
+                  className="flex-1 py-3 bg-stone-100 dark:bg-slate-700 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors"
                 >
                   取消
                 </button>

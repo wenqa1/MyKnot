@@ -287,7 +287,7 @@ export default function PeriodTracker() {
               records.map((record) => (
                 <GlassCard
                   key={record.id}
-                  className="flex items-center justify-between cursor-pointer hover:bg-white/80 transition-colors"
+                  className="flex items-center justify-between cursor-pointer hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors"
                   onClick={() => {
                     setEditRecord(record);
                     setRecordForm({
@@ -355,7 +355,7 @@ export default function PeriodTracker() {
 
           <label className="block">
             <span className="text-sm font-medium text-knot-dark">
-              结束日期 <span className="text-stone-300 font-normal">可选</span>
+              结束日期 <span className="text-stone-300 dark:text-slate-500 font-normal">可选</span>
             </span>
             <DatePicker
               value={recordForm.endDate}
@@ -367,7 +367,7 @@ export default function PeriodTracker() {
 
           <label className="block">
             <span className="text-sm font-medium text-knot-dark">
-              备注 <span className="text-stone-300 font-normal">可选</span>
+              备注 <span className="text-stone-300 dark:text-slate-500 font-normal">可选</span>
             </span>
             <textarea
               value={recordForm.note}
@@ -376,7 +376,7 @@ export default function PeriodTracker() {
               }
               placeholder="记录身体感受..."
               rows={2}
-              className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all resize-none"
+              className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all resize-none"
             />
           </label>
 
@@ -394,7 +394,7 @@ export default function PeriodTracker() {
                 setShowRecordForm(false);
                 setEditRecord(null);
               }}
-              className="flex-1 py-3 bg-stone-100 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 transition-colors"
+              className="flex-1 py-3 bg-stone-100 dark:bg-slate-700 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors"
             >
               取消
             </button>
@@ -453,7 +453,7 @@ export default function PeriodTracker() {
           <div className="flex gap-3 pt-2">
             <button
               onClick={() => setShowConfig(false)}
-              className="flex-1 py-3 bg-stone-100 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 transition-colors"
+              className="flex-1 py-3 bg-stone-100 dark:bg-slate-700 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors"
             >
               取消
             </button>

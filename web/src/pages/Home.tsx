@@ -134,7 +134,7 @@ export default function Home() {
                     setForm({ ...form, myName: e.target.value })
                   }
                   placeholder="你"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
               <label className="block">
@@ -146,7 +146,7 @@ export default function Home() {
                     setForm({ ...form, partnerName: e.target.value })
                   }
                   placeholder="TA"
-                  className="mt-1.5 w-full px-4 py-3 bg-white/60 rounded-xl border border-white/40 text-knot-dark placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                  className="mt-1.5 w-full px-4 py-3 bg-white/60 dark:bg-slate-800/60 rounded-xl border border-white/40 dark:border-slate-700/40 text-knot-dark dark:text-slate-200 placeholder:text-stone-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
                 />
               </label>
             </div>
@@ -178,7 +178,7 @@ export default function Home() {
           {days.toLocaleString()}
         </div>
         <p className="text-knot-muted text-sm mt-1">天</p>
-        <p className="text-stone-300 text-xs mt-0.5">
+        <p className="text-stone-300 dark:text-slate-500 text-xs mt-0.5">
           {startDate && format(startDate, "yyyy 年 M 月 d 日")}
           {" · "}
           {startDate && format(startDate, "EEEE")}
@@ -261,7 +261,7 @@ export default function Home() {
                 type="text"
                 value={form.myName}
                 onChange={(e) => setForm({ ...form, myName: e.target.value })}
-                className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
               />
             </label>
             <label className="block">
@@ -272,7 +272,7 @@ export default function Home() {
                 onChange={(e) =>
                   setForm({ ...form, partnerName: e.target.value })
                 }
-                className="mt-1.5 w-full px-4 py-3 bg-stone-50 rounded-xl border border-stone-100 text-knot-dark focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
+                className="mt-1.5 w-full px-4 py-3 bg-stone-50 dark:bg-slate-800 rounded-xl border border-stone-100 dark:border-slate-700 text-knot-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-knot-rose/40 transition-all"
               />
             </label>
           </div>
@@ -280,7 +280,7 @@ export default function Home() {
           <div className="flex gap-3 pt-2">
             <button
               onClick={() => setEditing(false)}
-              className="flex-1 py-3 bg-stone-100 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 transition-colors"
+              className="flex-1 py-3 bg-stone-100 dark:bg-slate-700 text-knot-muted rounded-xl font-semibold hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors"
             >
               取消
             </button>
