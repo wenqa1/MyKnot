@@ -10,7 +10,8 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "seed:admin": "tsx src/scripts/seed-admin.ts"
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
+    "seed:test": "tsx src/scripts/seed-test-user.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",
