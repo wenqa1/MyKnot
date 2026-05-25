@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import { imageSize as sizeOf } from "image-size";
 import prisma from "../db/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { getSharedUserIds } from "../middleware/space.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads", "gallery");
@@ -42,8 +43,9 @@ const router = Router();
 // GET /gallery
 router.get("/", requireAuth, async (req, res) => {
   try {
+    const userIds = await getSharedUserIds(req);
     const images = await prisma.galleryImage.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
       orderBy: { createdAt: "desc" },
     });
     res.json(images);
@@ -97,8 +99,9 @@ router.post("/", requireAuth, upload.single("image"), async (req, res) => {
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
     const image = await prisma.galleryImage.findFirst({
-      where: { id, userId: req.userId },
+      where: { id, userId: { in: userIds } },
     });
 
     if (!image) {

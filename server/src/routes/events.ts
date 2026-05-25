@@ -1,14 +1,16 @@
 import { Router } from "express";
 import prisma from "../db/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { getSharedUserIds } from "../middleware/space.js";
 
 const router = Router();
 
 // GET /events
 router.get("/", requireAuth, async (req, res) => {
   try {
+    const userIds = await getSharedUserIds(req);
     const events = await prisma.event.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
       orderBy: [{ sortOrder: "asc" }, { date: "asc" }],
     });
     res.json(events);
@@ -61,8 +63,9 @@ router.post("/", requireAuth, async (req, res) => {
 router.put("/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
     const existing = await prisma.event.findFirst({
-      where: { id, userId: req.userId },
+      where: { id, userId: { in: userIds } },
     });
 
     if (!existing) {
@@ -105,8 +108,9 @@ router.put("/:id", requireAuth, async (req, res) => {
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
     const existing = await prisma.event.findFirst({
-      where: { id, userId: req.userId },
+      where: { id, userId: { in: userIds } },
     });
 
     if (!existing) {

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../db/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { getSharedUserIds } from "../middleware/space.js";
 
 const router = Router();
 
@@ -24,8 +25,9 @@ router.get("/", requireAuth, async (req, res) => {
       });
     }
 
+    const userIds = await getSharedUserIds(req);
     const items = await prisma.scheduleItem.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
     });
 
     res.json({
@@ -57,7 +59,7 @@ router.put("/", requireAuth, async (req, res) => {
       },
     });
 
-    // Replace all items
+    // Replace only this user's items
     if (items) {
       await prisma.scheduleItem.deleteMany({ where: { userId: req.userId } });
 
@@ -75,8 +77,9 @@ router.put("/", requireAuth, async (req, res) => {
       }
     }
 
+    const userIds = await getSharedUserIds(req);
     const updatedItems = await prisma.scheduleItem.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
     });
 
     res.json({

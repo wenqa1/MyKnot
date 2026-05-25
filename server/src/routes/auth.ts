@@ -2,6 +2,7 @@ import { Router } from "express";
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import prisma from "../db/prisma.js";
 import { signToken, requireAuth } from "../middleware/auth.js";
+import { sendVerificationEmail } from "../utils/email.js";
 
 const router = Router();
 
@@ -56,8 +57,13 @@ router.post("/send-code", async (req, res) => {
       data: { email, code, expiresAt },
     });
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[DEV] Verification code for ${email}: ${code}`);
+    // Try sending via SMTP, fallback to console
+    try {
+      await sendVerificationEmail(email, code);
+    } catch {
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[DEV] Verification code for ${email}: ${code}`);
+      }
     }
 
     res.json({ ok: true });
@@ -67,7 +73,146 @@ router.post("/send-code", async (req, res) => {
   }
 });
 
-// POST /auth/verify
+function verifyCode(email: string, code: string): Promise<boolean> {
+  return prisma.verificationCode
+    .findFirst({
+      where: { email, used: false },
+      orderBy: { createdAt: "desc" },
+    })
+    .then((record) => {
+      if (!record || record.code !== code) return false;
+      if (new Date() > record.expiresAt) return false;
+      return prisma.verificationCode
+        .update({ where: { id: record.id }, data: { used: true } })
+        .then(() => true);
+    });
+}
+
+// POST /auth/register
+router.post("/register", async (req, res) => {
+  try {
+    const { username, password, email, code } = req.body;
+
+    if (!username || username.length < 3 || username.length > 20) {
+      res.status(400).json({ error: "Username must be 3-20 characters" });
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      res.status(400).json({ error: "Username can only contain letters, numbers and underscores" });
+      return;
+    }
+    if (!password || password.length < 6) {
+      res.status(400).json({ error: "Password must be at least 6 characters" });
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      res.status(400).json({ error: "Invalid email address" });
+      return;
+    }
+    if (!code || code.length !== 6) {
+      res.status(400).json({ error: "Verification code is required" });
+      return;
+    }
+
+    const valid = await verifyCode(email, code);
+    if (!valid) {
+      res.status(400).json({ error: "Invalid or expired verification code" });
+      return;
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ username }, { email }] },
+    });
+    if (existingUser) {
+      res.status(400).json({
+        error: existingUser.username === username
+          ? "Username already taken"
+          : "Email already registered",
+      });
+      return;
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashPassword(password),
+      },
+    });
+
+    const token = signToken({ id: user.id, email: user.email, role: user.role });
+
+    res.status(201).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar ? `/uploads/avatars/${user.avatar}` : null,
+        hasPassword: true,
+        role: user.role,
+        spaceId: user.spaceId,
+      },
+    });
+  } catch (err) {
+    console.error("register error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /auth/login
+router.post("/login", async (req, res) => {
+  try {
+    const { account, password } = req.body;
+    if (!account || !password) {
+      res.status(400).json({ error: "Account and password are required" });
+      return;
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [{ username: account }, { email: account }],
+      },
+    });
+
+    if (!user || !user.password) {
+      res.status(400).json({ error: "账号或密码错误" });
+      return;
+    }
+
+    if (!verifyPassword(password, user.password)) {
+      res.status(400).json({ error: "账号或密码错误" });
+      return;
+    }
+
+    if (user.disabled) {
+      res.status(401).json({ error: "Account disabled" });
+      return;
+    }
+
+    const token = signToken({ id: user.id, email: user.email, role: user.role });
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar ? `/uploads/avatars/${user.avatar}` : null,
+        hasPassword: true,
+        role: user.role,
+        spaceId: user.spaceId,
+      },
+    });
+  } catch (err) {
+    console.error("login error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /auth/verify (keep for backward compat / password reset verification)
 router.post("/verify", async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -76,83 +221,15 @@ router.post("/verify", async (req, res) => {
       return;
     }
 
-    const record = await prisma.verificationCode.findFirst({
-      where: { email, used: false },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!record || record.code !== code) {
+    const valid = await verifyCode(email, code);
+    if (!valid) {
       res.status(400).json({ error: "Invalid or expired code" });
       return;
     }
 
-    if (new Date() > record.expiresAt) {
-      res.status(400).json({ error: "Code has expired" });
-      return;
-    }
-
-    await prisma.verificationCode.update({
-      where: { id: record.id },
-      data: { used: true },
-    });
-
-    let user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      user = await prisma.user.create({ data: { email } });
-    }
-
-    const token = signToken({ id: user.id, email: user.email });
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        hasPassword: !!user.password,
-      },
-    });
+    res.json({ ok: true, verified: true });
   } catch (err) {
     console.error("verify error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// POST /auth/login (email + password)
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
-    }
-
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !user.password) {
-      res.status(400).json({ error: "账号未设置密码，请使用验证码登录" });
-      return;
-    }
-
-    if (!verifyPassword(password, user.password)) {
-      res.status(400).json({ error: "密码错误" });
-      return;
-    }
-
-    const token = signToken({ id: user.id, email: user.email });
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        hasPassword: true,
-      },
-    });
-  } catch (err) {
-    console.error("login error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -183,7 +260,16 @@ router.get("/me", requireAuth, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
-      select: { id: true, email: true, name: true, avatar: true, password: true },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        avatar: true,
+        password: true,
+        role: true,
+        spaceId: true,
+      },
     });
 
     if (!user) {
@@ -193,10 +279,13 @@ router.get("/me", requireAuth, async (req, res) => {
 
     res.json({
       id: user.id,
+      username: user.username,
       email: user.email,
       name: user.name,
-      avatar: user.avatar,
+      avatar: user.avatar ? `/uploads/avatars/${user.avatar}` : null,
       hasPassword: !!user.password,
+      role: user.role,
+      spaceId: user.spaceId,
     });
   } catch (err) {
     console.error("me error:", err);

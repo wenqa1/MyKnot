@@ -2,6 +2,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// 本地开发: sqlite | 生产部署: mysql
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -9,20 +10,48 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+  username  String?  @unique
   email     String   @unique
   name      String?
   avatar    String?
   password  String?
+  role      String   @default("user")
+  disabled  Boolean  @default(false)
+  spaceId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  space           Space?   @relation(fields: [spaceId], references: [id])
   profile         Profile?
   events          Event[]
   scheduleConfig  ScheduleConfig?
   scheduleItems   ScheduleItem[]
   periodConfig    PeriodConfig?
   periodRecords   PeriodRecord[]
-  galleryImages   GalleryImage[]
+  galleryImages      GalleryImage[]
+  notificationConfig NotificationConfig?
+}
+
+model Space {
+  id                    Int       @id @default(autoincrement())
+  inviteCode            String    @unique
+  relationshipStartDate DateTime?
+  myName                String?
+  partnerName           String?
+  createdAt             DateTime  @default(now())
+  users                 User[]
+}
+
+model SmtpConfig {
+  id        Int      @id @default(autoincrement())
+  host      String   @default("")
+  port      Int      @default(587)
+  user      String   @default("")
+  pass      String   @default("")
+  fromEmail String   @default("")
+  fromName  String   @default("MyKnot")
+  secure    Boolean  @default(false)
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationCode {
@@ -132,4 +161,48 @@ model GalleryImage {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model NotificationConfig {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+
+  // Channel toggles
+  emailEnabled      Boolean  @default(false)
+  barkToken         String   @default("")
+  barkEnabled       Boolean  @default(false)
+  serverChanKey     String   @default("")
+  serverChanEnabled Boolean  @default(false)
+  webhookUrl        String   @default("")
+  webhookEnabled    Boolean  @default(false)
+  dingTalkUrl       String   @default("")
+  dingTalkEnabled   Boolean  @default(false)
+  weComUrl          String   @default("")
+  weComEnabled      Boolean  @default(false)
+
+  // Event type toggles
+  notifyOnEvent      Boolean @default(true)
+  notifyOnPeriod     Boolean @default(true)
+  notifyOnAnniversary Boolean @default(true)
+
+  // Timing
+  advanceDays Int    @default(1)
+  notifyTime  String @default("08:00")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String
+  refId     String
+  channels  String
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, type, refId])
 }

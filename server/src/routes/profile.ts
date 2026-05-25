@@ -7,6 +7,18 @@ const router = Router();
 // GET /profile
 router.get("/", requireAuth, async (req, res) => {
   try {
+    if (req.userSpaceId) {
+      const space = await prisma.space.findUnique({
+        where: { id: req.userSpaceId },
+      });
+      res.json({
+        relationshipStartDate: space?.relationshipStartDate?.toISOString().slice(0, 10) ?? null,
+        myName: space?.myName ?? null,
+        partnerName: space?.partnerName ?? null,
+      });
+      return;
+    }
+
     const profile = await prisma.profile.findUnique({
       where: { userId: req.userId },
     });
@@ -38,6 +50,23 @@ router.put("/", requireAuth, async (req, res) => {
 
     if (!relationshipStartDate) {
       res.status(400).json({ error: "relationshipStartDate is required" });
+      return;
+    }
+
+    if (req.userSpaceId) {
+      const space = await prisma.space.update({
+        where: { id: req.userSpaceId },
+        data: {
+          relationshipStartDate: new Date(relationshipStartDate),
+          myName: myName !== undefined ? (myName || null) : undefined,
+          partnerName: partnerName !== undefined ? (partnerName || null) : undefined,
+        },
+      });
+      res.json({
+        relationshipStartDate: space.relationshipStartDate?.toISOString().slice(0, 10),
+        myName: space.myName,
+        partnerName: space.partnerName,
+      });
       return;
     }
 

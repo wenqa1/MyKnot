@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../db/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { getSharedUserIds } from "../middleware/space.js";
 
 const router = Router();
 
@@ -60,12 +61,14 @@ const PHASE_TIPS: Record<string, string> = {
 // GET /period
 router.get("/", requireAuth, async (req, res) => {
   try {
-    const config = await prisma.periodConfig.findUnique({
-      where: { userId: req.userId },
+    const userIds = await getSharedUserIds(req);
+
+    const config = await prisma.periodConfig.findFirst({
+      where: { userId: { in: userIds } },
     });
 
     const records = await prisma.periodRecord.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
       orderBy: { startDate: "desc" },
     });
 
@@ -151,8 +154,9 @@ router.put("/config", requireAuth, async (req, res) => {
 // GET /period/records
 router.get("/records", requireAuth, async (req, res) => {
   try {
+    const userIds = await getSharedUserIds(req);
     const records = await prisma.periodRecord.findMany({
-      where: { userId: req.userId },
+      where: { userId: { in: userIds } },
       orderBy: { startDate: "desc" },
     });
     res.json(records);
@@ -193,8 +197,9 @@ router.post("/records", requireAuth, async (req, res) => {
 router.put("/records/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
     const existing = await prisma.periodRecord.findFirst({
-      where: { id, userId: req.userId },
+      where: { id, userId: { in: userIds } },
     });
 
     if (!existing) {
@@ -225,8 +230,9 @@ router.put("/records/:id", requireAuth, async (req, res) => {
 router.delete("/records/:id", requireAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id as string);
+    const userIds = await getSharedUserIds(req);
     const existing = await prisma.periodRecord.findFirst({
-      where: { id, userId: req.userId },
+      where: { id, userId: { in: userIds } },
     });
 
     if (!existing) {
